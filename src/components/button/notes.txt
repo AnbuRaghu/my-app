@@ -1,0 +1,69 @@
+The Button.tsx file you've provided is a React component that defines a customizable button component. This component is designed to be flexible, allowing for different styles and behaviors based on the props passed to it. Let's break down the key parts of this file:
+
+Import Statements
+// Button.tsx
+import React from 'react';
+import styled from 'styled-components';
+Line 2: Imports the React library, which is necessary for defining React components.
+Line 3: Imports styled from styled-components, a library that allows you to write CSS in your JavaScript files. This is used to create styled components.
+ButtonProps Interface
+interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  children: React.ReactNode;
+  href?: string; // Optional href prop for links
+  variant?: 'primary' | 'secondary' | 'success' | 'danger'; // Updated variant prop
+}
+Lines 6-10: Defines an interface ButtonProps that extends the standard HTML button attributes (React.ButtonHTMLAttributes<HTMLButtonElement>). This allows the button to accept any standard button attributes as props.
+Line 7: Specifies that the button must have children, which are the elements that will be displayed inside the button.
+Line 8: Optionally accepts an href prop, making the button behave like a link.
+Line 9: Defines a variant prop that can be one of four predefined styles: 'primary', 'secondary', 'success', or 'danger'. This allows for easy customization of the button's appearance.
+Styled Components
+13: const StyledButton = styled.button<{ variant?: 'primary' | 'secondary' | 'success' | 'danger' }>`
+...
+57: `;
+Lines 13-57: Defines a styled button component using styled-components. This component can accept a variant prop to apply different styles based on the variant. The styles include padding, font size, border radius, and color changes based on the variant.
+Styled Link Component
+59: const StyledLink = styled.a<{ variant?: 'primary' | 'secondary' | 'success' | 'danger' }>`
+...
+104: `;
+Lines 59-104: Similar to StyledButton, this defines a styled link component. It's styled similarly to the button but is intended for use with the href prop, making the button behave like a link.
+Button Component
+106: const Button: React.FC<ButtonProps> = ({ children, href, variant, ...props }) => {
+...
+128: };
+Lines 106-128: Defines the Button component. It's a functional component that accepts ButtonProps as its props.
+Inside the component: It checks if the href prop is provided. If so, it renders a StyledLink component; otherwise, it renders a StyledButton. This allows the component to be used both as a button and as a link.
+Line 109: Destructures props to separate out the onCopy prop, which is not used in this component. This is a good practice to avoid passing unused props to the underlying DOM element.
+This component is a good example of how to create reusable, customizable components in React using TypeScript and styled-components. It demonstrates the use of TypeScript for type safety, styled-components for CSS-in-JS styling, and React's component composition for creating flexible UI elements.
+
+
+for this code 
+-----------------
+
+
+    // Filter out properties that are not compatible with an anchor element else we get typescript error
+       const anchorProps = Object.fromEntries(
+         Object.entries(rest).filter(([key]) => !key.startsWith('on') || key === 'onCopyCapture')
+       );
+
+The code snippet you're referring to is used to filter out properties from the rest object that are not compatible with an anchor (<a>) element when the Button component is being used as a link (i.e., when the href prop is provided). This is necessary because the Button component can be used both as a button (<button>) and as a link (<a>), and these two types of elements have different sets of valid attributes.
+
+Here's a breakdown of why this filtering is necessary:
+
+Background
+In HTML, the <button> and <a> elements have different sets of valid attributes. For example, the <button> element can have attributes like disabled, form, and type, while the <a> element can have attributes like href, target, and rel.
+
+TypeScript and React
+When using TypeScript with React, you often extend the standard HTML attributes to include React-specific attributes (like onClick, onChange, etc.). However, when you're conditionally rendering one of these elements based on props (like href in this case), you need to ensure that you're only passing attributes that are valid for the element being rendered.
+
+The Filtering Logic
+const anchorProps = Object.fromEntries(
+ Object.entries(rest).filter(([key]) => !key.startsWith('on') || key === 'onCopyCapture')
+);
+Object.entries(rest): This converts the rest object into an array of [key, value] pairs, where key is the property name and value is the property value.
+.filter(([key]) => !key.startsWith('on') || key === 'onCopyCapture'): This filters out properties that start with on, except for onCopyCapture. The reason for excluding onCopyCapture is because it's a React-specific event handler that's not valid for an <a> element.
+Object.fromEntries(...): This converts the filtered array of [key, value] pairs back into an object.
+Why This Filtering is Necessary
+Avoiding TypeScript Errors: By filtering out invalid attributes, you avoid TypeScript errors that would occur if you tried to pass an attribute that's not valid for the element being rendered.
+Avoiding HTML Validation Errors: Similarly, by ensuring that only valid attributes are passed to the <a> element, you avoid HTML validation errors that would occur if the browser encountered an invalid attribute.
+Conclusion
+This filtering logic is a clever way to ensure that the Button component can be used both as a button and as a link without causing type errors or validation errors. It demonstrates a good practice for handling conditional rendering of different types of elements in React components.
